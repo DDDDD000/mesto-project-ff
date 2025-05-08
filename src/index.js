@@ -7,7 +7,8 @@
 // @todo: Функция удаления карточки
 
 // @todo: Вывести карточки на страницу
-import '../pages/index.css';
+import './pages/index.css';
+import { initialCards } from './scripts/cards.js';
 
 const userTemplate = document.querySelector('#card-template').content;
 
