@@ -8,9 +8,15 @@
 
 // @todo: Вывести карточки на страницу
 import './pages/index.css';
+import { openModal, closeModal } from './components/modal.js';
 import { initialCards } from './scripts/cards.js';
 
 const userTemplate = document.querySelector('#card-template').content;
+
+
+const profileEditButton = document.querySelector('.profile__edit-button');
+const popupClose = document.querySelector('.popup__close');
+
 
 const placesList = document.querySelector('.places__list');
 
@@ -46,3 +52,12 @@ function showCards() {
 }
 
 showCards()
+
+
+profileEditButton.addEventListener('click', openModal);
+popupClose.addEventListener('click', closeModal)
+document.addEventListener('keydown', (evt) => {
+    if (evt.key === 'Escape') {
+        closeModal()
+    }
+})
