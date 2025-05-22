@@ -17,6 +17,14 @@ const userTemplate = document.querySelector('#card-template').content;
 const profileEditButton = document.querySelector('.profile__edit-button');
 const popupClose = document.querySelector('.popup__close');
 
+//popups
+const editPopup = document.querySelector('.popup_type_edit')
+const newCardPopup = document.querySelector('.popup_type_new-card')
+const imagePopup = document.querySelector('.popup_type_image')
+
+//forms
+const editForm = document.forms.edit_profile
+
 
 const placesList = document.querySelector('.places__list');
 
@@ -53,11 +61,34 @@ function showCards() {
 
 showCards()
 
+//PROFILE FORM
+const profileName = document.querySelector('.profile__title')
+const profileDescription = document.querySelector('.profile__description')
 
-profileEditButton.addEventListener('click', openModal);
-popupClose.addEventListener('click', closeModal)
+//Profile save
+function handleFormSubmit(evt) {
+    evt.preventDefault();
+
+    profileName.textContent = editForm.elements.name.value
+    profileDescription.textContent = editForm.elements.description.value
+
+    closeModal(editPopup)
+}
+//Profile open
+profileEditButton.addEventListener('click', () => {
+    editForm.elements.name.value = profileName.textContent
+    editForm.elements.description.value = profileDescription.textContent
+    openModal(editPopup)
+});
+//Profile close
+popupClose.addEventListener('click', () => closeModal(editPopup))
+
 document.addEventListener('keydown', (evt) => {
     if (evt.key === 'Escape') {
-        closeModal()
+        closeModal(editPopup)
     }
 })
+
+editForm.addEventListener('submit', handleFormSubmit)
+
+//ADD CARD FORM
