@@ -9,6 +9,7 @@ function handleEscape(evt) {
 export function openModal(popupElement) {
     currentOpenedPopup = popupElement
     popupElement.style.display = 'flex';
+    // popupElement.classList.add(".popup_is-animated")
     document.addEventListener('keydown', handleEscape)
 }
 
