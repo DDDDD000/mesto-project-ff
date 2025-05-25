@@ -1,8 +1,19 @@
+let currentOpenedPopup = null
 
-export function openModal(popupName) {
-    popupName.style.display = 'flex'
+function handleEscape(evt) {
+    if (evt.key === 'Escape') {
+        closeModal(currentOpenedPopup)
+    }
 }
 
-export function closeModal(popupName) {
-    popupName.style.display = 'none'
+export function openModal(popupElement) {
+    currentOpenedPopup = popupElement
+    popupElement.style.display = 'flex';
+    document.addEventListener('keydown', handleEscape)
+}
+
+export function closeModal(popupElement) {
+    popupElement.style.display = 'none';
+    document.removeEventListener('keydown', handleEscape)
+    currentOpenedPopup = null
 }

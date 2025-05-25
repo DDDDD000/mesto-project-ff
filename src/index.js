@@ -1,34 +1,25 @@
-// @todo: Темплейт карточки
-
-// @todo: DOM узлы
-
-// @todo: Функция создания карточки
-
-// @todo: Функция удаления карточки
-
-// @todo: Вывести карточки на страницу
 import './pages/index.css';
 import { openModal, closeModal } from './components/modal.js';
-import { initialCards } from './scripts/cards.js';
+import { initialCards } from './components/cards.js';
 
 const userTemplate = document.querySelector('#card-template').content;
 
-
 const profileEditButton = document.querySelector('.profile__edit-button');
-const popupClose = document.querySelector('.popup__close');
+const profileAddButton = document.querySelector('.profile__add-button');
+const popupCloseButtons = document.querySelectorAll('.popup__close');
 
-//popups
-const editPopup = document.querySelector('.popup_type_edit')
-const newCardPopup = document.querySelector('.popup_type_new-card')
-const imagePopup = document.querySelector('.popup_type_image')
+//Popups
+const editPopup = document.querySelector('.popup_type_edit');
+const newCardPopup = document.querySelector('.popup_type_new-card');
+const imagePopup = document.querySelector('.popup_type_image');
 
-//forms
-const editForm = document.forms.edit_profile
-
+//Forms
+const editForm = document.forms['edit-profile'];
+const addCardForm = document.forms['new-place'];
 
 const placesList = document.querySelector('.places__list');
 
-function createCard(data, { deleteCard }) {
+function createCard(data, { deleteCard, handleCardLike, handleImageOpen }) {
 
     const userCard = userTemplate.querySelector('.places__item').cloneNode(true);
 
@@ -54,18 +45,34 @@ function deleteCard(userCard) {
 
 function showCards() {
     initialCards.forEach(data => {
-        const cardData = createCard(data, { deleteCard })
+        const cardData = createCard(data, { deleteCard, handleCardLike, handleImageOpen })
         placesList.append(cardData);
     });
 }
 
 showCards()
+//POPUPS
+
+//Any Popup Close
+popupCloseButtons.forEach((button) => {
+    button.addEventListener('click', (evt) => {
+        const popup = evt.currentTarget.closest('.popup');
+        closeModal(popup)
+    })
+})
 
 //PROFILE FORM
 const profileName = document.querySelector('.profile__title')
 const profileDescription = document.querySelector('.profile__description')
 
-//Profile save
+//Profile Open
+profileEditButton.addEventListener('click', () => {
+    editForm.elements.name.value = profileName.textContent
+    editForm.elements.description.value = profileDescription.textContent
+    openModal(editPopup)
+});
+
+//Profile Save
 function handleFormSubmit(evt) {
     evt.preventDefault();
 
@@ -74,21 +81,57 @@ function handleFormSubmit(evt) {
 
     closeModal(editPopup)
 }
-//Profile open
-profileEditButton.addEventListener('click', () => {
-    editForm.elements.name.value = profileName.textContent
-    editForm.elements.description.value = profileDescription.textContent
-    openModal(editPopup)
-});
-//Profile close
-popupClose.addEventListener('click', () => closeModal(editPopup))
-
-document.addEventListener('keydown', (evt) => {
-    if (evt.key === 'Escape') {
-        closeModal(editPopup)
-    }
-})
 
 editForm.addEventListener('submit', handleFormSubmit)
-
 //ADD CARD FORM
+
+//Add Card Open
+profileAddButton.addEventListener('click', () => {
+    addCardForm.elements['place-name'].value = ''
+    addCardForm.elements['link'].value = ''
+    openModal(newCardPopup)
+})
+
+//Add Card Save
+function handleFormCardAdd(evt) {
+    evt.preventDefault();
+    const data = {
+        name: addCardForm.elements['place-name'].value,
+        link: addCardForm.elements['link'].value,
+    }
+    const cardData = createCard(data, { deleteCard, handleCardLike, handleImageOpen })
+    placesList.prepend(cardData)
+    closeModal(newCardPopup);
+}
+
+addCardForm.addEventListener('submit', handleFormCardAdd);
+
+//IMAGE FORM
+//Image Open
+function handleImageOpen(evt) {
+    const cardImage = evt.target.closest('.card__image')
+    if (cardImage) {
+        const card = cardImage.closest('.card');
+
+        const cardTitle = card.querySelector('.card__title').textContent;
+
+        const popupImage = imagePopup.querySelector('.popup__image');
+        const popupCaption = imagePopup.querySelector('.popup__caption');
+
+        popupImage.src = cardImage.src;
+        popupImage.alt = cardTitle
+        popupCaption.textContent = cardTitle
+        openModal(imagePopup);
+    }
+}
+
+//Image Like
+function handleCardLike(evt) {
+    if (evt.target.classList.contains('card__like-button'))
+        evt.target.classList.toggle('card__like-button_is-active')
+}
+
+placesList.addEventListener('click', (evt) => {
+    handleImageOpen(evt)
+    handleCardLike(evt)
+})
