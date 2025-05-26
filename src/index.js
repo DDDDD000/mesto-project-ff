@@ -62,3 +62,4 @@ placesList.addEventListener('click', (evt) => {
     handleImageOpen(evt)
     handleCardLike(evt)
 })
+

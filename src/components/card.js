@@ -40,7 +40,6 @@ export function showCards() {
     });
 }
 
-
 //Card Add
 export function handleFormCardAdd(evt) {
     evt.preventDefault();
