@@ -1,28 +1,39 @@
 import './pages/index.css';
+import { initialCards } from './components/cards.js';
 import { openModal, closeModal } from './components/modal.js';
-import { showCards, handleFormCardAdd, handleCardLike, handleImageOpen } from './components/card.js';
+import { handleCardLike, createCard, deleteCard } from './components/card.js';
 
 const profileEditButton = document.querySelector('.profile__edit-button');
 const profileAddButton = document.querySelector('.profile__add-button');
 const popupCloseButtons = document.querySelectorAll('.popup__close');
-
 //Popups
 const editPopup = document.querySelector('.popup_type_edit');
 const newCardPopup = document.querySelector('.popup_type_new-card');
+const imagePopup = document.querySelector('.popup_type_image');
 
 //Forms
 const editForm = document.forms['edit-profile'];
 const addCardForm = document.forms['new-place'];
 
 const placesList = document.querySelector('.places__list');
+editPopup.classList.add('popup_is-animated')
+newCardPopup.classList.add('popup_is-animated')
+imagePopup.classList.add('popup_is-animated')
+//Show Cards
+function showCards() {
+    initialCards.forEach(data => {
+        const cardData = createCard(data, { deleteCard, handleCardLike, handleImageOpen })
+        placesList.append(cardData);
+    });
+}
 
 showCards()
 //POPUPS
 
 //Any Popup Close
 popupCloseButtons.forEach((button) => {
-    button.addEventListener('click', (evt) => {
-        const popup = evt.currentTarget.closest('.popup');
+    const popup = button.closest('.popup');
+    button.addEventListener('click', () => {
         closeModal(popup)
     })
 })
@@ -51,15 +62,36 @@ editForm.addEventListener('submit', handleFormSubmit)
 
 //Add Card Open
 profileAddButton.addEventListener('click', () => {
-    addCardForm.elements['place-name'].value = ''
-    addCardForm.elements['link'].value = ''
+    addCardForm.reset()
     openModal(newCardPopup)
 })
+
+//Card Add
+function handleFormCardAdd(evt) {
+    evt.preventDefault();
+    const data = {
+        name: addCardForm.elements['place-name'].value,
+        link: addCardForm.elements['link'].value,
+    }
+    const cardData = createCard(data, { deleteCard, handleCardLike, handleImageOpen })
+    placesList.prepend(cardData)
+    closeModal(newCardPopup);
+}
 addCardForm.addEventListener('submit', handleFormCardAdd);
 
-//Image Like & Open
-placesList.addEventListener('click', (evt) => {
-    handleImageOpen(evt)
-    handleCardLike(evt)
-})
+// Card Image Open
+function handleImageOpen(evt) {
+    const cardImage = evt.target.closest('.card__image')
+    if (cardImage) {
+        const card = cardImage.closest('.card');
 
+        const cardTitle = card.querySelector('.card__title').textContent;
+        const popupImage = imagePopup.querySelector('.popup__image');
+        const popupCaption = imagePopup.querySelector('.popup__caption');
+
+        popupImage.src = cardImage.src;
+        popupImage.alt = cardTitle
+        popupCaption.textContent = cardTitle
+        openModal(imagePopup);
+    }
+}
