@@ -6,6 +6,8 @@ import { handleCardLike, createCard, deleteCard } from './components/card.js';
 const profileEditButton = document.querySelector('.profile__edit-button');
 const profileAddButton = document.querySelector('.profile__add-button');
 const popupCloseButtons = document.querySelectorAll('.popup__close');
+
+
 //Popups
 const editPopup = document.querySelector('.popup_type_edit');
 const newCardPopup = document.querySelector('.popup_type_new-card');
@@ -16,9 +18,10 @@ const editForm = document.forms['edit-profile'];
 const addCardForm = document.forms['new-place'];
 
 const placesList = document.querySelector('.places__list');
-editPopup.classList.add('popup_is-animated')
-newCardPopup.classList.add('popup_is-animated')
-imagePopup.classList.add('popup_is-animated')
+
+const popupImage = imagePopup.querySelector('.popup__image');
+const popupCaption = imagePopup.querySelector('.popup__caption');
+
 //Show Cards
 function showCards() {
     initialCards.forEach(data => {
@@ -36,6 +39,7 @@ popupCloseButtons.forEach((button) => {
     button.addEventListener('click', () => {
         closeModal(popup)
     })
+    popup.classList.add('popup_is-animated')
 })
 
 //PROFILE FORM
@@ -80,18 +84,9 @@ function handleFormCardAdd(evt) {
 addCardForm.addEventListener('submit', handleFormCardAdd);
 
 // Card Image Open
-function handleImageOpen(evt) {
-    const cardImage = evt.target.closest('.card__image')
-    if (cardImage) {
-        const card = cardImage.closest('.card');
-
-        const cardTitle = card.querySelector('.card__title').textContent;
-        const popupImage = imagePopup.querySelector('.popup__image');
-        const popupCaption = imagePopup.querySelector('.popup__caption');
-
-        popupImage.src = cardImage.src;
-        popupImage.alt = cardTitle
-        popupCaption.textContent = cardTitle
-        openModal(imagePopup);
-    }
+function handleImageOpen({ link, name }) {
+    popupImage.src = link;
+    popupImage.alt = name;
+    popupCaption.textContent = name;
+    openModal(imagePopup);
 }

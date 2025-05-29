@@ -16,10 +16,9 @@ export function createCard(data, { deleteCard, handleCardLike, handleImageOpen }
 
     deleteButton.addEventListener('click', () => deleteCard(userCard));
 
-    cardImage.addEventListener('click', (evt) => handleImageOpen({
+    cardImage.addEventListener('click', () => handleImageOpen({
         link: data.link,
         name: data.name,
-        target: evt.target
     }));
 
     cardLike.addEventListener('click', (evt) => handleCardLike(evt));
