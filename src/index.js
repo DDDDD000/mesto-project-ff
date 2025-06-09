@@ -2,7 +2,17 @@ import './pages/index.css';
 import { initialCards } from './components/cards.js';
 import { openModal, closeModal } from './components/modal.js';
 import { handleCardLike, createCard, deleteCard } from './components/card.js';
-import { enableValidation, check } from './components/validation.js';
+import { clearValidation, enableValidation } from './components/validation.js';
+
+
+const validationConfig = {
+    formSelector: '.popup__form',
+    inputSelector: '.popup__input',
+    submitButtonSelector: '.popup__button',
+    inactiveButtonClass: 'popup__button-disabled',
+    inputErrorClass: 'form__input_type_error',
+    errorClass: 'form__input-error_active'
+};
 
 const profileEditButton = document.querySelector('.profile__edit-button');
 const profileAddButton = document.querySelector('.profile__add-button');
@@ -38,6 +48,11 @@ showCards()
 popupCloseButtons.forEach((button) => {
     const popup = button.closest('.popup');
     button.addEventListener('click', () => {
+        const form = popup.querySelector('.popup__form');
+        if (form) {
+            form.reset();
+            clearValidation(form, validationConfig);
+        }
         closeModal(popup)
     })
     popup.classList.add('popup_is-animated')
@@ -51,6 +66,7 @@ const profileDescription = document.querySelector('.profile__description')
 profileEditButton.addEventListener('click', () => {
     editForm.elements.name.value = profileName.textContent
     editForm.elements.description.value = profileDescription.textContent
+    clearValidation(editForm, validationConfig)
     openModal(editPopup)
 });
 
@@ -68,6 +84,7 @@ editForm.addEventListener('submit', handleFormSubmit)
 //Add Card Open
 profileAddButton.addEventListener('click', () => {
     addCardForm.reset()
+    clearValidation(addCardForm, validationConfig)
     openModal(newCardPopup)
 })
 

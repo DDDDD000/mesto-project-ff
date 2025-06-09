@@ -1,6 +1,14 @@
 const isValid = (formElement, inputElement) => {
 
+    if (inputElement.validity.patternMismatch) {
+        inputElement.setCustomValidity(inputElement.dataset.errorMessage);
+    }
+    else {
+        inputElement.setCustomValidity("");
+    }
+
     if (!inputElement.validity.valid) {
+
         showInputError(formElement, inputElement, inputElement.validationMessage);
     }
     else {
@@ -17,6 +25,7 @@ const showInputError = (formElement, inputElement, errorMessage) => {
     inputElement.classList.add('form__input_type_error');
     errorElement.textContent = errorMessage;
     errorElement.classList.add('form__input-error_active');
+
 }
 
 const hideInputError = (formElement, inputElement) => {
@@ -25,6 +34,7 @@ const hideInputError = (formElement, inputElement) => {
     inputElement.classList.remove('form__input_type_error');
     errorElement.classList.remove('form__input-error_active');
     errorElement.textContent = '';
+
 };
 
 const setEventListeners = (formElement) => {
@@ -67,10 +77,25 @@ const toggleButtonState = (inputList, buttonElement) => {
     }
 }
 
-export const check = (formElement) => {
-    const inputList = Array.from(formElement.querySelectorAll('.popup__input'));
-    const formList = Array.from(document.querySelectorAll('.popup__form'));
 
-    console.log(inputList)
-    console.log(formList)
+export const clearValidation = (profileForm, validationConfig) => {
+    const inputList = Array.from(profileForm.querySelectorAll(validationConfig.inputSelector));
+    const submitButton = profileForm.querySelector(validationConfig.submitButtonSelector);
+
+    inputList.forEach((inputElement) => {
+        const errorElement = profileForm.querySelector(`.${inputElement.id}-error`);
+
+        inputElement.classList.remove(validationConfig.inputErrorClass);
+        inputElement.classList.remove('popup__input-valid-error');
+
+        if (errorElement) {
+            errorElement.classList.remove(validationConfig.errorClass);
+        inputElement.classList.remove('popup__input-valid-error');
+            errorElement.textContent = ''
+        }
+        inputElement.setCustomValidity('')
+    });
+
+    submitButton.disabled = true;
+    submitButton.classList.remove(validationConfig.inactiveButtonClass);
 }
