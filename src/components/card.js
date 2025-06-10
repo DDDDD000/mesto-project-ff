@@ -1,6 +1,8 @@
+import { deleteCardFromServer, deleteLike, putLike } from "./api";
+
 const userTemplate = document.querySelector('#card-template').content;
 
-export function createCard(data, { deleteCard, handleCardLike, handleImageOpen }) {
+export function createCard(data, { handleCardLike, handleImageOpen }) {
 
     const userCard = userTemplate.querySelector('.places__item').cloneNode(true);
 
@@ -17,27 +19,54 @@ export function createCard(data, { deleteCard, handleCardLike, handleImageOpen }
     likeCount.textContent = data.likes.length
 
     if (data.owner._id != 'ba745ef116e75b64f2466c34') {
-        deleteButton.style.display = 'none';
+        deleteButton.remove();
     }
 
-    deleteButton.addEventListener('click', () => deleteCard(userCard));
+    deleteButton.addEventListener('click', () => {
+        deleteCardFromServer(data._id)
+            .then(() => userCard.remove())
+            .catch(err => console.error('Ошибка удаления:', err));
+    });
 
     cardImage.addEventListener('click', () => handleImageOpen({
         link: data.link,
         name: data.name,
     }));
 
-    cardLike.addEventListener('click', (evt) => handleCardLike(evt));
+    const isLikedByMe = data.likes.some(like => like._id === "ba745ef116e75b64f2466c34")
+    if (isLikedByMe) {
+        cardLike.classList.add('card__like-button_is-active');
+    }
+
+    cardLike.addEventListener('click', (evt) => {
+        handleCardLike(evt, data._id, likeCount)
+    });
 
     return userCard
 }
 //Delete Card
-export function deleteCard(userCard) {
-    userCard.remove()
+export function deleteCard(userCard, cardId) {
+    deleteCardFromServer(cardId)
+        .then(() => {
+            userCard.remove()
+        })
+        .catch(err => {
+            console.error('Ошибка при удалении карточки:', err);
+        })
 }
 
 //Image Like
-export function handleCardLike(evt) {
-    if (evt.target.classList.contains('card__like-button'))
-        evt.target.classList.toggle('card__like-button_is-active')
+export function handleCardLike(evt, cardId, likeCountElement) {
+    const likeButton = evt.target;
+    const isLiked = likeButton.classList.contains('card__like-button_is-active');
+
+    const likePromise = isLiked ? deleteLike(cardId) : putLike(cardId)
+    likePromise
+        .then(updatedCard => {
+            likeButton.classList.toggle('card__like-button_is-active')
+            likeCountElement.textContent = updatedCard.likes.length;
+        })
+        .catch(err => {
+            console.error('Ошибка при лайке:', err);
+        });
 }

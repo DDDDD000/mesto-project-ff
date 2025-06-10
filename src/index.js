@@ -1,7 +1,6 @@
 import './pages/index.css';
-import { initialCards } from './components/cards.js';
 import { openModal, closeModal } from './components/modal.js';
-import { handleCardLike, createCard, deleteCard } from './components/card.js';
+import { handleCardLike, createCard } from './components/card.js';
 import { clearValidation, enableValidation } from './components/validation.js';
 import { addCard, editProfile, getCards, getProfileInfo } from './components/api.js';
 
@@ -35,18 +34,34 @@ const popupImage = imagePopup.querySelector('.popup__image');
 const popupCaption = imagePopup.querySelector('.popup__caption');
 
 //Show Cards
+let currentUserId = '';
+const loadPageData = () => {
+    getProfileInfo()
+        .then(profile => {
+            currentUserId = profile._id;
 
-getCards()
-    .then(cards => {
-        const placesList = document.querySelector('.places__list');
-        cards.forEach(data => {
-            const cardData = createCard(data, { deleteCard, handleCardLike, handleImageOpen });
-            placesList.append(cardData);
+            profileName.textContent = profile.name;
+            profileDescription.textContent = profile.about;
+            profilePicture.style.backgroundImage = `url('${profile.avatar}')`;
+
+            return getCards()
         })
+        .then(cards => {
+            renderCards(cards)
+        })
+        .catch(err => {
+            console.error('Ошибка загрузки данных:', err);
+        });
+}
+
+const renderCards = (cards) => {
+    const placesList = document.querySelector('.places__list');
+    placesList.innerHTML = '';
+    cards.forEach(data => {
+        const cardData = createCard(data, { handleCardLike, handleImageOpen });
+        placesList.append(cardData);
     })
-    .catch(err => {
-        console.error('Не удалось загрузить карточки:', err);
-    })
+}
 
 //POPUPS
 
@@ -112,7 +127,7 @@ function handleFormCardAdd(evt) {
     }
     addCard(data.name, data.link)
         .then(cardData => {
-            const cardElement = createCard(cardData, { deleteCard, handleCardLike, handleImageOpen });
+            const cardElement = createCard(cardData, { handleCardLike, handleImageOpen });
             placesList.prepend(cardElement)
             closeModal(newCardPopup);
         })
@@ -132,12 +147,4 @@ function handleImageOpen({ link, name }) {
 
 enableValidation();
 
-getProfileInfo()
-    .then(userData => {
-        profileName.textContent = userData.name;
-        profileDescription.textContent = userData.about;
-        profilePicture.style.backgroundImage = `url('${userData.avatar || 'https://pictures.s3.yandex.net/frontend-developer/common/ava.jpg'}')`;
-    })
-    .catch(err => {
-        console.error('Ошибка при загрузке профиля:', err);
-    });
+loadPageData();

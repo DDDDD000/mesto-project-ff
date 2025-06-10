@@ -62,13 +62,47 @@ export const addCard = (name, link) => {
         });
 }
 
-const cardDelete = () => {
-    return fetch('https://mesto.nomoreparties.co/v1/wff-cohort-40/cards', {
+export const deleteCardFromServer = (cardId) => {
+    return fetch(`https://nomoreparties.co/v1/wff-cohort-40/cards/${cardId}`, {
         method: 'DELETE',
         headers: {
             authorization: '3288a148-b765-4961-8ec1-f86ec90a7c0a',
-            'Content-Type': 'application/json'
-        },
-        body: JSON.stringify({ name, link })
+        }
     })
+        .then(res => {
+            if (!res.ok) {
+                throw new Error(`Ошибка: ${res.status}`);
+            }
+            return res.json();
+        })
+}
+
+export const putLike = (cardId) => {
+    return fetch(`https://nomoreparties.co/v1/wff-cohort-40/cards/likes/${cardId}`, {
+        method: 'PUT',
+        headers: {
+            authorization: '3288a148-b765-4961-8ec1-f86ec90a7c0a',
+        }
+    })
+        .then(res => {
+            if (!res.ok) {
+                throw new Error(`Ошибка: ${res.status}`);
+            }
+            return res.json()
+        })
+}
+
+export const deleteLike = (cardId) => {
+    return fetch(`https://nomoreparties.co/v1/wff-cohort-40/cards/likes/${cardId}`, {
+        method: 'DELETE',
+        headers: {
+            authorization: '3288a148-b765-4961-8ec1-f86ec90a7c0a',
+        }
+    })
+        .then(res => {
+            if (!res.ok) {
+                throw new Error(`Ошибка: ${res.status}`);
+            }
+            return res.json()
+        })
 }
