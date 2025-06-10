@@ -9,10 +9,16 @@ export function createCard(data, { deleteCard, handleCardLike, handleImageOpen }
     const cardTitle = userCard.querySelector('.card__title');
     const cardAlternative = userCard.querySelector('.card__image');
     const cardLike = userCard.querySelector('.card__like-button')
+    const likeCount = userCard.querySelector('.card__like-count');
 
     cardImage.src = data.link;
     cardTitle.textContent = data.name;
     cardAlternative.alt = data.name;
+    likeCount.textContent = data.likes.length
+
+    if (data.owner._id != 'ba745ef116e75b64f2466c34') {
+        deleteButton.style.display = 'none';
+    }
 
     deleteButton.addEventListener('click', () => deleteCard(userCard));
 

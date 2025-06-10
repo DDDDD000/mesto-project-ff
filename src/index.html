@@ -77,8 +77,6 @@
       </div>
     </div>
   </div>
-  <!-- <script src="./scripts/cards.js"></script> -->
-  <!-- <script src="./index.js" defer></script> -->
 
   <template id="card-template">
     <li class="places__item card">
@@ -87,7 +85,10 @@
       <div class="card__description">
         <h2 class="card__title">
         </h2>
-        <button type="button" class="card__like-button"></button>
+        <div class="card__like-container">
+          <button type="button" class="card__like-button"></button>
+          <span class="card__like-count"></span>
+        </div>
       </div>
     </li>
   </template>
