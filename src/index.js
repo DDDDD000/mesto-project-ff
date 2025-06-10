@@ -35,10 +35,19 @@ const popupCaption = imagePopup.querySelector('.popup__caption');
 
 //Show Cards
 function showCards() {
-    initialCards.forEach(data => {
-        const cardData = createCard(data, { deleteCard, handleCardLike, handleImageOpen })
-        placesList.append(cardData);
-    });
+    return fetch('https://nomoreparties.co/v1/wff-cohort-40/cards', {
+        headers: {
+            authorization: '3288a148-b765-4961-8ec1-f86ec90a7c0a',
+        }
+    })
+        .then(res => res.json())
+        .then((result) => {
+            const cards = Array.from(result)
+            cards.forEach(data => {
+                const cardData = createCard(data, { deleteCard, handleCardLike, handleImageOpen })
+                placesList.append(cardData);
+            });
+        })
 }
 
 showCards()
@@ -61,6 +70,7 @@ popupCloseButtons.forEach((button) => {
 //PROFILE FORM
 const profileName = document.querySelector('.profile__title')
 const profileDescription = document.querySelector('.profile__description')
+const profilePicture = document.querySelector('.profile__image')
 
 //Profile Open
 profileEditButton.addEventListener('click', () => {
@@ -73,11 +83,29 @@ profileEditButton.addEventListener('click', () => {
 //Profile Save
 function handleFormSubmit(evt) {
     evt.preventDefault();
+    return fetch('https://mesto.nomoreparties.co/v1/wff-cohort-40/users/me', {
+        method: 'PATCH',
+        headers: {
+            authorization: '3288a148-b765-4961-8ec1-f86ec90a7c0a',
+            'Content-Type': 'application/json'
+        },
+        body: JSON.stringify({
+            name: editForm.elements.name.value,
+            about: editForm.elements.description.value,
+        })
+    })
+        .then((res) => {
+            if (!res.ok) {
+                throw new Error(`Ошибка: ${res.status}`)
+            }
+            return res.json();
+        })
+        .then(data => {
+            profileName.textContent = data.name;
+            profileDescription.textContent = data.about;
 
-    profileName.textContent = editForm.elements.name.value
-    profileDescription.textContent = editForm.elements.description.value
-
-    closeModal(editPopup)
+            closeModal(editPopup);
+        })
 }
 editForm.addEventListener('submit', handleFormSubmit)
 
@@ -110,3 +138,35 @@ function handleImageOpen({ link, name }) {
 }
 
 enableValidation();
+
+
+const getProfile = () => {
+    return fetch('https://mesto.nomoreparties.co/v1/wff-cohort-40/users/me', {
+        headers: {
+            authorization: '3288a148-b765-4961-8ec1-f86ec90a7c0a',
+        }
+    })
+        .then(res => res.json())
+        .then((result) => {
+            profileName.textContent = result.name
+            profileDescription.textContent = result.about
+            profilePicture.style.backgroundImage = "url('https://pictures.s3.yandex.net/frontend-developer/common/ava.jpg')"
+            console.log("Your id: " + result._id)
+        })
+}
+
+getProfile()
+
+const addCard = () => {
+    return fetch('https://mesto.nomoreparties.co/v1/wff-cohort-40/cards', {
+        method: 'POST',
+        headers: {
+            authorization: '3288a148-b765-4961-8ec1-f86ec90a7c0a',
+            'Content-Type': 'application/json'
+        },
+        body: JSON.stringify({
+            name: '',
+            link: ''
+        })
+    })
+}
