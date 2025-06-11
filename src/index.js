@@ -16,6 +16,7 @@ const validationConfig = {
 
 const profileEditButton = document.querySelector('.profile__edit-button');
 const profileAddButton = document.querySelector('.profile__add-button');
+const profilePictureButton = document.querySelector('.profile__image');
 const popupCloseButtons = document.querySelectorAll('.popup__close');
 
 
@@ -23,6 +24,7 @@ const popupCloseButtons = document.querySelectorAll('.popup__close');
 const editPopup = document.querySelector('.popup_type_edit');
 const newCardPopup = document.querySelector('.popup_type_new-card');
 const imagePopup = document.querySelector('.popup_type_image');
+const pfpPopup = document.querySelector('.popup_type_change-pfp');
 
 //Forms
 const editForm = document.forms['edit-profile'];
@@ -145,6 +147,11 @@ function handleImageOpen({ link, name }) {
     openModal(imagePopup);
 }
 
+
+//Profile Picture Edit Open
+profilePictureButton.addEventListener('click', () =>{
+    openModal(pfpPopup)
+})
 enableValidation();
 
 loadPageData();
