@@ -61,7 +61,7 @@ const renderCards = (cards) => {
     const placesList = document.querySelector('.places__list');
     placesList.innerHTML = '';
     cards.forEach(data => {
-        const cardData = createCard(data, { handleCardLike, handleImageOpen });
+        const cardData = createCard(data, { handleCardLike, handleImageOpen }, currentUserId);
         placesList.append(cardData);
     })
 }

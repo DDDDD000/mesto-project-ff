@@ -2,7 +2,7 @@ import { deleteCardFromServer, deleteLike, putLike } from "./api";
 
 const userTemplate = document.querySelector('#card-template').content;
 
-export function createCard(data, { handleCardLike, handleImageOpen }) {
+export function createCard(data, { handleCardLike, handleImageOpen }, currentUserId) {
 
     const userCard = userTemplate.querySelector('.places__item').cloneNode(true);
 
@@ -18,7 +18,7 @@ export function createCard(data, { handleCardLike, handleImageOpen }) {
     cardAlternative.alt = data.name;
     likeCount.textContent = data.likes.length
 
-    if (data.owner._id != 'ba745ef116e75b64f2466c34') {
+    if (data.owner._id !== currentUserId) {
         deleteButton.remove();
     }
 
@@ -33,7 +33,7 @@ export function createCard(data, { handleCardLike, handleImageOpen }) {
         name: data.name,
     }));
 
-    const isLikedByMe = data.likes.some(like => like._id === "ba745ef116e75b64f2466c34")
+    const isLikedByMe = data.likes.some(like => like._id === currentUserId)
     if (isLikedByMe) {
         cardLike.classList.add('card__like-button_is-active');
     }
