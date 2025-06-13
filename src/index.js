@@ -2,7 +2,7 @@ import './pages/index.css';
 import { openModal, closeModal } from './components/modal.js';
 import { handleCardLike, createCard } from './components/card.js';
 import { clearValidation, enableValidation } from './components/validation.js';
-import { addCard, editProfile, getCards, getProfileInfo } from './components/api.js';
+import { addCard, editProfile, getCards, getProfileInfo, updateAvatar } from './components/api.js';
 
 
 const validationConfig = {
@@ -29,6 +29,7 @@ const pfpPopup = document.querySelector('.popup_type_change-pfp');
 //Forms
 const editForm = document.forms['edit-profile'];
 const addCardForm = document.forms['new-place'];
+const pfpForm = document.forms['pfp-change'];
 
 const placesList = document.querySelector('.places__list');
 
@@ -98,6 +99,12 @@ profileEditButton.addEventListener('click', () => {
 function handleFormSubmit(evt) {
     evt.preventDefault();
 
+    const submitButton = editForm.querySelector('.popup__button');
+    const originalButtonText = submitButton.textContent;
+
+    submitButton.textContent = 'Сохранение...';
+    submitButton.disabled = true;
+
     const name = editForm.elements.name.value;
     const about = editForm.elements.description.value;
 
@@ -109,7 +116,12 @@ function handleFormSubmit(evt) {
         })
         .catch(err => {
             console.error('Ошибка при обновлении профиля:', err);
+            alert('Не удалось сохранить изменения. Пожалуйста, попробуйте ещё раз.');
         })
+        .finally(() => {
+            submitButton.textContent = originalButtonText;
+            submitButton.disabled = false;
+        });
 }
 editForm.addEventListener('submit', handleFormSubmit)
 
@@ -123,6 +135,13 @@ profileAddButton.addEventListener('click', () => {
 //Card Add
 function handleFormCardAdd(evt) {
     evt.preventDefault();
+
+    const submitButton = addCardForm.querySelector('.popup__button');
+    const originalButtonText = submitButton.textContent;
+
+    submitButton.textContent = 'Сохранение...';
+    submitButton.disabled = true;
+
     const data = {
         name: addCardForm.elements['place-name'].value,
         link: addCardForm.elements['link'].value,
@@ -134,7 +153,12 @@ function handleFormCardAdd(evt) {
             closeModal(newCardPopup);
         })
         .catch(err => {
-            console.error("Ошибка при добавлении карточки:", err);
+            console.error('Ошибка при добавлении карточки:', err);
+            alert('Не удалось сохранить изменения. Пожалуйста, попробуйте ещё раз.');
+        })
+        .finally(() => {
+            submitButton.textContent = originalButtonText;
+            submitButton.disabled = false;
         });
 }
 addCardForm.addEventListener('submit', handleFormCardAdd);
@@ -149,9 +173,37 @@ function handleImageOpen({ link, name }) {
 
 
 //Profile Picture Edit Open
-profilePictureButton.addEventListener('click', () =>{
+profilePictureButton.addEventListener('click', () => {
+    pfpForm.reset();
+    clearValidation(pfpForm, validationConfig);
     openModal(pfpPopup)
 })
+
+const handlePfpFormSubmit = (evt) => {
+    evt.preventDefault();
+
+    const submitButton = pfpForm.querySelector('.popup__button');
+    const originalButtonText = submitButton.textContent;
+
+    submitButton.textContent = 'Сохранение...';
+    submitButton.disabled = true;
+    const link = pfpForm.elements['link'].value;
+
+    updateAvatar(link)
+        .then(data => {
+            profilePicture.style.backgroundImage = `url('${data.avatar}')`;
+            closeModal(pfpPopup);
+        })
+        .catch(err => {
+            console.error('Ошибка при обновлении аватара:', err);
+            alert('Не удалось сохранить изменения. Пожалуйста, попробуйте ещё раз.');
+        })
+        .finally(() => {
+            submitButton.textContent = originalButtonText;
+            submitButton.disabled = false;
+        });
+}
+pfpForm.addEventListener('submit', handlePfpFormSubmit);
 enableValidation();
 
 loadPageData();

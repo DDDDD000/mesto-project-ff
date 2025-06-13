@@ -1,53 +1,65 @@
-const profileName = document.querySelector('.profile__title');
-const profileDescription = document.querySelector('.profile__description');
-const profilePicture = document.querySelector('.profile__image');
+const config = {
+    baseUrl: 'https://mesto.nomoreparties.co/v1/wff-cohort-40',
+    headers: {
+        authorization: '3288a148-b765-4961-8ec1-f86ec90a7c0a',
+        'Content-Type': 'application/json'
+    }
+}
 
 export const getProfileInfo = () => {
-    return fetch('https://mesto.nomoreparties.co/v1/wff-cohort-40/users/me', {
-        headers: {
-            authorization: '3288a148-b765-4961-8ec1-f86ec90a7c0a',
-        }
+    return fetch(`${config.baseUrl}/users/me`, {
+        headers: config.headers,
     })
-        .then(res => res.json())
+        .then(res => {
+            if (!res.ok) {
+                return Promise.reject(`Ошибка: ${res.status}`);
+            }
+            return res.json();
+        })
+        .catch(err => {
+            console.error('Ошибка при загрузке профиля:', err);
+            throw err;
+        });
 }
 
 export const getCards = () => {
-    return fetch('https://nomoreparties.co/v1/wff-cohort-40/cards', {
-        headers: {
-            authorization: '3288a148-b765-4961-8ec1-f86ec90a7c0a',
-        }
+    return fetch(`${config.baseUrl}/cards`, {
+        headers: config.headers,
     })
-        .then(res => res.json())
+        .then(res => {
+            if (!res.ok) {
+                return Promise.reject(`Ошибка: ${res.status}`);
+            }
+            return res.json();
+        })
         .catch(err => {
             console.error('Ошибка при загрузке карточек:', err);
             throw err;
-        })
+        });
 }
 
 export const editProfile = (name, about) => {
-    return fetch('https://mesto.nomoreparties.co/v1/wff-cohort-40/users/me', {
+    return fetch(`${config.baseUrl}/users/me`, {
         method: 'PATCH',
-        headers: {
-            authorization: '3288a148-b765-4961-8ec1-f86ec90a7c0a',
-            'Content-Type': 'application/json'
-        },
+        headers: config.headers,
         body: JSON.stringify({ name, about })
     })
-        .then((res) => {
+        .then(res => {
             if (!res.ok) {
-                throw new Error(`Ошибка: ${res.status}`)
+                return Promise.reject(`Ошибка: ${res.status}`);
             }
             return res.json();
+        })
+        .catch(err => {
+            console.error('Ошибка при обновлении профиля:', err);
+            throw err;
         });
 }
 
 export const addCard = (name, link) => {
-    return fetch('https://mesto.nomoreparties.co/v1/wff-cohort-40/cards', {
+    return fetch(`${config.baseUrl}/cards`, {
         method: 'POST',
-        headers: {
-            authorization: '3288a148-b765-4961-8ec1-f86ec90a7c0a',
-            'Content-Type': 'application/json'
-        },
+        headers: config.headers,
         body: JSON.stringify({ name, link })
     })
         .then(res => {
@@ -57,52 +69,76 @@ export const addCard = (name, link) => {
             return res.json()
         })
         .catch(err => {
-            console.error("Ошибка в addCard:", err);
+            console.error("Ошибка при добавлении карточки:", err);
             throw err;
         });
 }
 
 export const deleteCardFromServer = (cardId) => {
-    return fetch(`https://nomoreparties.co/v1/wff-cohort-40/cards/${cardId}`, {
+    return fetch(`${config.baseUrl}/cards/${cardId}`, {
         method: 'DELETE',
-        headers: {
-            authorization: '3288a148-b765-4961-8ec1-f86ec90a7c0a',
-        }
+        headers: config.headers,
     })
         .then(res => {
             if (!res.ok) {
-                throw new Error(`Ошибка: ${res.status}`);
+                return Promise.reject(`Ошибка: ${res.status}`);
             }
             return res.json();
         })
+        .catch(err => {
+            console.error('Ошибка при удалении карточки:', err);
+            throw err;
+        });
 }
 
 export const putLike = (cardId) => {
-    return fetch(`https://nomoreparties.co/v1/wff-cohort-40/cards/likes/${cardId}`, {
+    return fetch(`${config.baseUrl}/cards/likes/${cardId}`, {
         method: 'PUT',
-        headers: {
-            authorization: '3288a148-b765-4961-8ec1-f86ec90a7c0a',
-        }
+        headers: config.headers,
     })
         .then(res => {
             if (!res.ok) {
-                throw new Error(`Ошибка: ${res.status}`);
+                return Promise.reject(`Ошибка: ${res.status}`);
             }
-            return res.json()
+            return res.json();
         })
+        .catch(err => {
+            console.error('Ошибка при попытке поставить лайк:', err);
+            throw err;
+        });
 }
 
 export const deleteLike = (cardId) => {
-    return fetch(`https://nomoreparties.co/v1/wff-cohort-40/cards/likes/${cardId}`, {
+    return fetch(`${config.baseUrl}/cards/likes/${cardId}`, {
         method: 'DELETE',
-        headers: {
-            authorization: '3288a148-b765-4961-8ec1-f86ec90a7c0a',
-        }
+        headers: config.headers,
     })
         .then(res => {
             if (!res.ok) {
-                throw new Error(`Ошибка: ${res.status}`);
+                return Promise.reject(`Ошибка: ${res.status}`);
             }
-            return res.json()
+            return res.json();
         })
+        .catch(err => {
+            console.error('Ошибка при попытке убрать лайк:', err);
+            throw err;
+        });
+}
+
+export const updateAvatar = (link) => {
+    return fetch(`${config.baseUrl}/users/me/avatar`, {
+        method: 'PATCH',
+        headers: config.headers,
+        body: JSON.stringify({ avatar: link })
+    })
+        .then(res => {
+            if (!res.ok) {
+                return Promise.reject(`Ошибка: ${res.status}`);
+            }
+            return res.json();
+        })
+        .catch(err => {
+            console.error('Ошибка при обновления аватара:', err);
+            throw err;
+        });
 }
