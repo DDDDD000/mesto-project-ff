@@ -41,12 +41,12 @@
         <h3 class="popup__title">Редактировать профиль</h3>
         <form class="popup__form" name="edit-profile" novalidate>
           <input id="name-input" type="text" name="name" class="popup__input popup__input_type_name" placeholder="Имя"
-            required minlength="2" maxlength="40" pattern="^[a-zA-Zа-яА-Яё -]+$"
+            required minlength="2" maxlength="40" pattern="^[a-zA-Zа-яА-ЯёЁ \-]+$"
             data-error-message="Разрешены только латинские, кириллические буквы, знаки дефиса и пробелы">
           <span class="name-input-error form__input-error"></span>
           <input id="description-input" type="text" name="description"
             class="popup__input popup__input_type_description" placeholder="Занятие" required minlength="2"
-            maxlength="200" pattern="^[a-zA-Zа-яА-Яё -]+$"
+            maxlength="200" pattern="^[a-zA-Zа-яА-ЯёЁ \-]+$"
             data-error-message="Разрешены только латинские, кириллические буквы, знаки дефиса и пробелы">
           <span class="description-input-error form__input-error"></span>
           <button type="submit" class="button popup__button">Сохранить</button>

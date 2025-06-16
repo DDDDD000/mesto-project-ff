@@ -10,32 +10,14 @@ export const getProfileInfo = () => {
     return fetch(`${config.baseUrl}/users/me`, {
         headers: config.headers,
     })
-        .then(res => {
-            if (!res.ok) {
-                return Promise.reject(`Ошибка: ${res.status}`);
-            }
-            return res.json();
-        })
-        .catch(err => {
-            console.error('Ошибка при загрузке профиля:', err);
-            throw err;
-        });
+        .then(getResponseData)
 }
 
 export const getCards = () => {
     return fetch(`${config.baseUrl}/cards`, {
         headers: config.headers,
     })
-        .then(res => {
-            if (!res.ok) {
-                return Promise.reject(`Ошибка: ${res.status}`);
-            }
-            return res.json();
-        })
-        .catch(err => {
-            console.error('Ошибка при загрузке карточек:', err);
-            throw err;
-        });
+        .then(getResponseData)
 }
 
 export const editProfile = (name, about) => {
@@ -44,16 +26,7 @@ export const editProfile = (name, about) => {
         headers: config.headers,
         body: JSON.stringify({ name, about })
     })
-        .then(res => {
-            if (!res.ok) {
-                return Promise.reject(`Ошибка: ${res.status}`);
-            }
-            return res.json();
-        })
-        .catch(err => {
-            console.error('Ошибка при обновлении профиля:', err);
-            throw err;
-        });
+        .then(getResponseData)
 }
 
 export const addCard = (name, link) => {
@@ -62,16 +35,7 @@ export const addCard = (name, link) => {
         headers: config.headers,
         body: JSON.stringify({ name, link })
     })
-        .then(res => {
-            if (!res.ok) {
-                throw new Error(`Ошибка: ${res.status}`);
-            }
-            return res.json()
-        })
-        .catch(err => {
-            console.error("Ошибка при добавлении карточки:", err);
-            throw err;
-        });
+        .then(getResponseData)
 }
 
 export const deleteCardFromServer = (cardId) => {
@@ -79,16 +43,7 @@ export const deleteCardFromServer = (cardId) => {
         method: 'DELETE',
         headers: config.headers,
     })
-        .then(res => {
-            if (!res.ok) {
-                return Promise.reject(`Ошибка: ${res.status}`);
-            }
-            return res.json();
-        })
-        .catch(err => {
-            console.error('Ошибка при удалении карточки:', err);
-            throw err;
-        });
+        .then(getResponseData)
 }
 
 export const putLike = (cardId) => {
@@ -96,16 +51,7 @@ export const putLike = (cardId) => {
         method: 'PUT',
         headers: config.headers,
     })
-        .then(res => {
-            if (!res.ok) {
-                return Promise.reject(`Ошибка: ${res.status}`);
-            }
-            return res.json();
-        })
-        .catch(err => {
-            console.error('Ошибка при попытке поставить лайк:', err);
-            throw err;
-        });
+        .then(getResponseData)
 }
 
 export const deleteLike = (cardId) => {
@@ -113,16 +59,7 @@ export const deleteLike = (cardId) => {
         method: 'DELETE',
         headers: config.headers,
     })
-        .then(res => {
-            if (!res.ok) {
-                return Promise.reject(`Ошибка: ${res.status}`);
-            }
-            return res.json();
-        })
-        .catch(err => {
-            console.error('Ошибка при попытке убрать лайк:', err);
-            throw err;
-        });
+        .then(getResponseData)
 }
 
 export const updateAvatar = (link) => {
@@ -131,14 +68,12 @@ export const updateAvatar = (link) => {
         headers: config.headers,
         body: JSON.stringify({ avatar: link })
     })
-        .then(res => {
-            if (!res.ok) {
-                return Promise.reject(`Ошибка: ${res.status}`);
-            }
-            return res.json();
-        })
-        .catch(err => {
-            console.error('Ошибка при обновления аватара:', err);
-            throw err;
-        });
+        .then(getResponseData)
+}
+
+const getResponseData = (res) => {
+    if (!res.ok) {
+        return Promise.reject(`Ошибка: ${res.status}`);
+    }
+    return res.json();
 }

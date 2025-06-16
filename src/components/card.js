@@ -44,16 +44,6 @@ export function createCard(data, { handleCardLike, handleImageOpen }, currentUse
 
     return userCard
 }
-//Delete Card
-export function deleteCard(userCard, cardId) {
-    deleteCardFromServer(cardId)
-        .then(() => {
-            userCard.remove()
-        })
-        .catch(err => {
-            console.error('Ошибка при удалении карточки:', err);
-        })
-}
 
 //Image Like
 export function handleCardLike(evt, cardId, likeCountElement) {

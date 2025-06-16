@@ -36,21 +36,44 @@ const placesList = document.querySelector('.places__list');
 const popupImage = imagePopup.querySelector('.popup__image');
 const popupCaption = imagePopup.querySelector('.popup__caption');
 
+
+const handleLoadingState = (button, promise, {
+    loadingText = 'Сохранение...',
+    successCallBack = () => { },
+    errorCallBack = (err) => console.error('Ошибка', err)
+} = {}) => {
+    const originalText = button.textContent;
+
+    button.textContent = loadingText;
+    button.disabled = true;
+
+    return promise
+        .then(data => {
+            successCallBack(data);
+            return data
+        })
+        .catch(err => {
+            errorCallBack(err)
+            throw err
+        })
+        .finally(() => {
+            button.textContent = originalText
+            button.disabled = false
+        })
+}
+
 //Show Cards
 let currentUserId = '';
 const loadPageData = () => {
-    getProfileInfo()
-        .then(profile => {
+    Promise.all([getProfileInfo(), getCards()])
+        .then(([profile, cards]) => {
             currentUserId = profile._id;
-
             profileName.textContent = profile.name;
             profileDescription.textContent = profile.about;
             profilePicture.style.backgroundImage = `url('${profile.avatar}')`;
 
-            return getCards()
-        })
-        .then(cards => {
-            renderCards(cards)
+            // Рендерим карточки
+            renderCards(cards);
         })
         .catch(err => {
             console.error('Ошибка загрузки данных:', err);
@@ -72,11 +95,6 @@ const renderCards = (cards) => {
 popupCloseButtons.forEach((button) => {
     const popup = button.closest('.popup');
     button.addEventListener('click', () => {
-        const form = popup.querySelector('.popup__form');
-        if (form) {
-            form.reset();
-            clearValidation(form, validationConfig);
-        }
         closeModal(popup)
     })
     popup.classList.add('popup_is-animated')
@@ -100,28 +118,21 @@ function handleFormSubmit(evt) {
     evt.preventDefault();
 
     const submitButton = editForm.querySelector('.popup__button');
-    const originalButtonText = submitButton.textContent;
-
-    submitButton.textContent = 'Сохранение...';
-    submitButton.disabled = true;
-
     const name = editForm.elements.name.value;
     const about = editForm.elements.description.value;
 
-    editProfile(name, about)
-        .then(data => {
+    handleLoadingState(submitButton, editProfile(name, about), {
+        successCallBack: (data) => {
             profileName.textContent = data.name;
             profileDescription.textContent = data.about;
             closeModal(editPopup);
-        })
-        .catch(err => {
+        },
+        errorCallBack: (err) => {
             console.error('Ошибка при обновлении профиля:', err);
             alert('Не удалось сохранить изменения. Пожалуйста, попробуйте ещё раз.');
-        })
-        .finally(() => {
-            submitButton.textContent = originalButtonText;
-            submitButton.disabled = false;
-        });
+        }
+    }
+    );
 }
 editForm.addEventListener('submit', handleFormSubmit)
 
@@ -137,29 +148,22 @@ function handleFormCardAdd(evt) {
     evt.preventDefault();
 
     const submitButton = addCardForm.querySelector('.popup__button');
-    const originalButtonText = submitButton.textContent;
-
-    submitButton.textContent = 'Сохранение...';
-    submitButton.disabled = true;
-
     const data = {
         name: addCardForm.elements['place-name'].value,
         link: addCardForm.elements['link'].value,
     }
-    addCard(data.name, data.link)
-        .then(cardData => {
-            const cardElement = createCard(cardData, { handleCardLike, handleImageOpen });
-            placesList.prepend(cardElement)
+    handleLoadingState(submitButton, addCard(data.name, data.link), {
+        successCallBack: (cardData) => {
+            const cardElement = createCard(cardData, { handleCardLike, handleImageOpen }, currentUserId);
+            placesList.prepend(cardElement);
             closeModal(newCardPopup);
-        })
-        .catch(err => {
+        },
+        errorCallback: (err) => {
             console.error('Ошибка при добавлении карточки:', err);
             alert('Не удалось сохранить изменения. Пожалуйста, попробуйте ещё раз.');
-        })
-        .finally(() => {
-            submitButton.textContent = originalButtonText;
-            submitButton.disabled = false;
-        });
+        }
+    }
+    );
 }
 addCardForm.addEventListener('submit', handleFormCardAdd);
 
@@ -183,27 +187,20 @@ const handlePfpFormSubmit = (evt) => {
     evt.preventDefault();
 
     const submitButton = pfpForm.querySelector('.popup__button');
-    const originalButtonText = submitButton.textContent;
-
-    submitButton.textContent = 'Сохранение...';
-    submitButton.disabled = true;
     const link = pfpForm.elements['link'].value;
 
-    updateAvatar(link)
-        .then(data => {
+    handleLoadingState(submitButton, updateAvatar(link), {
+        successCallBack: (data) => {
             profilePicture.style.backgroundImage = `url('${data.avatar}')`;
             closeModal(pfpPopup);
-        })
-        .catch(err => {
+        },
+        errorCallback: (err) => {
             console.error('Ошибка при обновлении аватара:', err);
             alert('Не удалось сохранить изменения. Пожалуйста, попробуйте ещё раз.');
-        })
-        .finally(() => {
-            submitButton.textContent = originalButtonText;
-            submitButton.disabled = false;
-        });
+        }
+    })
 }
 pfpForm.addEventListener('submit', handlePfpFormSubmit);
-enableValidation();
+enableValidation(validationConfig);
 
 loadPageData();
