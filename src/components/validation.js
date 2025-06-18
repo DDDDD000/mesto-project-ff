@@ -8,12 +8,11 @@ const isValid = (formElement, inputElement, config) => {
 
     if (!inputElement.validity.valid) {
         showInputError(formElement, inputElement, inputElement.validationMessage, config);
-        inputElement.classList.add('popup__input-valid-error');
     } else {
         hideInputError(formElement, inputElement, config);
-        inputElement.classList.remove('popup__input-valid-error');
     }
 };
+
 
 const showInputError = (formElement, inputElement, errorMessage, config) => {
     const errorElement = formElement.querySelector(`.${inputElement.id}-error`);
@@ -76,7 +75,6 @@ export const clearValidation = (formElement, config) => {
 
     inputList.forEach((inputElement) => {
         hideInputError(formElement, inputElement, config);
-        inputElement.classList.remove('popup__input-valid-error');
         inputElement.setCustomValidity('');
     });
 

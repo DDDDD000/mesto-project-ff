@@ -114,7 +114,7 @@ profileEditButton.addEventListener('click', () => {
 });
 
 //Profile Save
-function handleFormSubmit(evt) {
+function handleProfileUpdate(evt) {
     evt.preventDefault();
 
     const submitButton = editForm.querySelector('.popup__button');
@@ -134,7 +134,7 @@ function handleFormSubmit(evt) {
     }
     );
 }
-editForm.addEventListener('submit', handleFormSubmit)
+editForm.addEventListener('submit', handleProfileUpdate)
 
 //Add Card Open
 profileAddButton.addEventListener('click', () => {
